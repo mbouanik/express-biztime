@@ -5,11 +5,14 @@ const express = require("express");
 const app = express();
 const ExpressError = require("./expressError");
 const companiesRouter = require("./routes/companies");
+const invoicesRouter = require("./routes/invoices");
+
 app.use(express.json());
 
-/** 404 handler */
 app.use("/companies", companiesRouter);
+app.use("/invoices", invoicesRouter);
 
+/** 404 handler */
 app.use(function (req, res, next) {
   const err = new ExpressError("Not Found", 404);
   return next(err);
