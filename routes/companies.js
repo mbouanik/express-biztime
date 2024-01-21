@@ -14,16 +14,16 @@ router.get("/:code", async (req, res, next) => {
     const company = await db.query(`SELECT * FROM companies WHERE code = $1`, [
       code,
     ]);
-
+    if (company.rows.length === 0) {
+      throw new ExpressError(`Company ${code} not found`, 404);
+    }
     const invoice = await db.query(
       `SELECT * FROM invoices WHERE comp_code = $1`,
       [code],
     );
     const result = company.rows[0];
     result.invoices = invoice.rows;
-    if (company.rows.length === 0) {
-      throw new ExpressError(`Company ${code} not found`, 404);
-    }
+
     return res.json({ company: result });
   } catch (e) {
     return next(e);
@@ -58,7 +58,7 @@ router.post("", async (req, res, next) => {
   }
 });
 
-router.patch("/:code", async (req, res, next) => {
+router.put("/:code", async (req, res, next) => {
   try {
     const { code } = req.params;
     const { name, description } = req.body;
